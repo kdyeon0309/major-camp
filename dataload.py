@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 st.title('Uber pickups in NYC')
 
@@ -16,7 +17,6 @@ def load_data(nrows):
     data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
     return data
 
-
 # 텍스트 요소 생성. 사용자에게 데이터가 로드 되고 있음을 알린다.
 data_load_state = st.text('Loading data...')
 
@@ -29,3 +29,14 @@ data_load_state.text('Loading data...done!')
 # 부제목 만들기
 st.subheader('Raw data')
 st.write(data)
+
+# 시간대별 픽업 수 시각화
+st.subheader('Number of pickups by hour')
+data['hour'] = data[DATE_COLUMN].dt.hour
+hist_values = np.histogram(data['hour'], bins=24, range=(0,24))[0]
+
+st.bar_chart(hist_values)
+
+# 지도에 픽업 위치 표시
+st.subheader('Map of all pickups')
+st.map(data[['lat', 'lon']])
